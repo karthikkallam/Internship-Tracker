@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Python
+backend/.venv/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs and misc
+*.log
+
+# Docker volumes
+postgres_data/

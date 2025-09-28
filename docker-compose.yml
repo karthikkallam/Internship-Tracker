@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: internship-tracker-postgres
+    environment:
+      POSTGRES_DB: internship_db
+      POSTGRES_USER: internship_user
+      POSTGRES_PASSWORD: internship_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "internship_user", "-d", "internship_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: internship-tracker-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://internship_user:internship_pass@postgres:5432/internship_db
+      GREENHOUSE_BOARDS: >
+        abnormalsecurity,adobe,adobe-firefly,affirm,airbnb,airtable,alchemy,algolia,alibaba,amd,anduril,andurilindustries,anthropic,apple,appliedintuition,aptos,archer,arista,arm,asana,asana-research,atlassian,attentive,aurora,aurorainnovation,autodesk,automattic,automox,aws-ai,axle,axonius,baidu,benchling,betaworks,betterment,bigid,bird,bitly,bitso,blend,block,bloomberg,bloomreach,box,braze,brex,bytedance,c3ai,calm,caribou,carta,carvana,celonis,cerebras,checkr,chime,cisco,clarifai,cloudera,cloudflare,cockroachlabs,cohere,coinbase,commercetools,confluent,corelight,coupang,coursera,cruise,cybereason,databento,databricks,datacamp,datadoghq,dataiku,dataminr,deepgram,deepmind,deliveroo,dell,digitalocean,diligent,discord,discord-research,doordash,dropbox,duolingo,elastic,elastic-ai,engineersgate,enlitic,enova,ericsson,etsy,everlaw,evernote,evidation,expedia,extend,facebook,faire,fastly,figma,fireblocks,fivetran,flexe,flexport,forward,fujitsu,ginkgo,github,gitlab,gofundme,google,grail,grammarly,gusto,hashicorp,hedvig,hewlettpackard,honeycomb,hopin,huawei,hubspot,hudl,hypergiant,ibm,iherb,impossiblefoods,indeed,insitro,instabase,instacart,intel,intercom,intuit,intuitive,iterable,jobyaviation,jumio,justworks,karat,kaseya,khanacademy,kindred,klaviyo,komodohealth,lattice,launchdarkly,leapmotion,leapyear,lenovo,linkedin,logicmonitor,lucidmotors,luminar,lyft,magicleap,markforged,marqeta,masterclass,mattermost,mavenclinic,mavenoid,maymobility,medium,mercari,mercury,meta,meta-ai,microsoft-ai,microstrategy,mindbody,mitsubishi,monday,mongodb,motional,mozilla,muckrack,muleSoft,mutiny,myfitnesspal,natera,navan,navvis,neo4j,netflix,netflix-animations,netlify,neuralink,newrelic,nexhealth,nextdoor,niantic,nokia,noredink,notion,nuro,nvidia,octantbio,okcoin,okta,omadahealth,onelogin,onetrust,openai,openrobotics,opentable,oracle,osaro,oscar,outschool,outsetmedical,overjet,pagerduty,palantir,palantir-foundry,panasonic,pathai,paypal,pebble,perceptiveautomata,perpay,philo,pilot,pinterest,plaid,plume,point72,postman,postmates,project44,prose,qualcomm,qualtrics,quantumscape,quora,ramp,reach,reddit,redditinc,redventures,relativityspace,riotgames,rippling,riskified,rivian,robinhood,roblox,roivant,rubrik,runwayml,salesforce,salesloft,samsara,samsung,sap,scaleai,scaleapi,scandit,scribd,seagate,seatgeek,segment,sense,sentinelone,service-now,servicetitan,shopify,shopify-ml,shopmonkey,showpad,siemens,sigma,simple,simplisafe,singlestore,skydio,slack,smartnews,smartsheet,snap,snapdocs,snaplogic,snowflakecomputing,snowplow,snyk,sofi,solarisbank,solugen,sonos,sony,sourcegraph,spacex,splunk,spotify,sproutsocial,square,squarespace,squareup,startree,stitchfix,stripe,superhuman,supernal,supportlogic,surveymonkey,synack,synthesia,taboola,teachable,telesign,tencent,tesla,thomsonreuters,thoughtspot,tiktok,tinder,toshiba,trello,truework,turo,twilio,twitch,twitter,twosigma,uber,unity,unity3d,upbound,upstart,urbint,vendia,vercel,verkada,vidyard,vimeo,virtru,vivian,vmware,warp,wasabi,wayfair,waymo,weave,weavegrid,webflow,wework,workato,workboard,xiaomi,xnor,xometry,yahoo,yelp,yext,yipitdata,yubico,zapier,zapp,zappos,zenbusiness,zendesk,zendrive,zillow,zola,zoom,zscaler,zynga
+      LEVER_COMPANIES: >
+        wealthsimple,shippo,palantir,gopuff,spotify,chownow,attentive,brightwheel,lyrahealth,mindtickle,outreach,plaid,wattpad,finix,kariusdx,sonatype,vida,xero
+      ASHBY_ORGANIZATIONS: >
+        runway,character,perplexity,cohere,openai,harvey,gptzero,deepgram,primer,posthog,ramp,linear,vector,roboflow,skydio,superhuman,weave,dust,replit,vanta,suno,anyscale
+      SMARTRECRUITERS_COMPANIES: >
+        smartrecruiters,palantir,wayfair,continental,wework,raytheontechnologies,uber
+      RECRUITEE_COMPANIES: >
+        bunq,virtuagym,channable,helloprint,gorgias,personio,supercell
+      POLL_INTERVAL_MIN_SECONDS: 120
+      POLL_INTERVAL_MAX_SECONDS: 240
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: internship-tracker-frontend
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://backend:8000
+      VITE_WS_URL: ws://backend:8000/ws
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
