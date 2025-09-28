@@ -1,8 +1,8 @@
-# Internship Tracker (a.k.a. “I need a job by June”)
+# Internship Tracker
 
-Welcome! If you’re a fellow student trying to juggle classes, clubs, and job apps, this repo is for you. The app scrapes a bunch of company career pages every few minutes, keeps only internship-friendly roles in the United States, and blasts updates straight to a live React dashboard. No more doom-scrolling through 50 tabs at 2 a.m.
+If you’re a student trying to juggle classes, clubs, and job apps, this repo is for you. The app scrapes a bunch of company career pages every few minutes, keeps only internship-friendly roles in the United States, and blasts updates straight to a live React dashboard. 
 
-## What you actually get
+## What you get
 - **Real-time feed**: new listings appear in the UI the moment the backend ingests them.
 - **Push notifications**: browser tab stays open, toaster pops whenever a fresh role drops.
 - **Source coverage**: Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee (the open APIs companies actually expose). Everything is filtered to internships in the U.S. only, so no more “Senior Internal Communications” false positives.
@@ -54,24 +54,10 @@ npm run dev -- --host
 Hit http://localhost:5173 and http://localhost:8000 like normal. The frontend points to the local backend out of the box.
 
 ## Where the data comes from
-We only touch the public career-site APIs (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee). Big names on Workday/Taleo/etc. don’t expose anonymous JSON feeds, so they’ll only appear if we add a compliant connector (PRs welcome!). If a company edits a posting, the timestamp will jump—no way around that unless the provider sends historical metadata.
-
-## FAQ (well, the texts my friends send)
-**“It says an internship dropped 5 hours ago, but I saw it yesterday.”** The ATS bumped `updated_at` because someone edited the posting. We store the freshest timestamp available.
-
-**“How do I watch only ML internships?”** Search/filter UI is on the roadmap. For now hack it client-side by filtering `title`/`source` in `frontend/src/App.tsx` or add backend filters before `results.append(...)`.
-
-**“Can I contribute?”** Absolutely. Ideas that would help everyone:
-- Add another ATS connector without breaking ToS.
-- Improve location parsing or remote heuristics.
-- Add keyword filters / search / Slack alerts.
-- Build a timeline view (first seen vs last updated).
+The site only touches the public career-site APIs (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee). Big names on Workday/Taleo/etc. don’t expose anonymous JSON feeds, so they’ll only appear if we add a compliant connector. If a company edits a posting, the timestamp will jump—no way around that unless the provider sends historical metadata.
 
 ## Quick roadmap ideas
-- Slack/Discord bot for “OMG internship just dropped” alerts.
+- Slack/Discord bot for “internship just dropped” alerts.
 - UI filters by company, role, tech stack.
 - CSV/RSS export for the spreadsheet crowd.
 - Optional caching or asynchronous workers so 300+ boards don’t hammer your Wi‑Fi.
-
-## Finals week pep talk
-College recruiting is chaos, but you’ve got this. This tracker won’t write cover letters for you, but it will make sure you don’t miss the drop. Good luck, hydrate, and may your OA cooldown be short.
